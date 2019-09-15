@@ -12,7 +12,6 @@ from PIL import Image
 # loading images
 train = []
 label = []
-test_dir = Path('facesdb/test')
 train_dir = Path('facesdb/training')
 for person in os.listdir(train_dir):
     count = 0
@@ -50,24 +49,28 @@ model.add(layers.Dropout(0.2))
 model.add(layers.Dense(7, activation='softmax'))
 model.summary()
 
-# model.load_weights("/facesdb/model/first_run.json")
+model.load_weights("/facesdb/model/first_run.json")
 
 model.compile(loss='categorical_crossentropy', optimizer='rmsprop', metrics=['accuracy'])
-model.fit(train, label, batch_size=25, epochs=200, verbose=1)
+model.fit(train, label, batch_size=25, epochs=150, verbose=1)
+
+# Save weights
+model.save_weights("/facesdb/model/first_run.json")
 
 test = []
 test_label = []
-for people in os.listdir(test_directory):
-    for file in os.listdir(test_directory + '/' + people):
-        count = 0
-        for img in os.listdir(test_directory + '/' + people + '/' + file):
-            if count < 7:
-                new_img = Image.open(test_directory + '/' + file, 'r')
-                resized_img = new_img.resize((64, 64), Image.ANTIALIAS)
-                resized_img = np.array(resized_img)
-                test.append(resized_img)
-                test_label.append(count)
-                count += 1
+test_dir = Path('facesdb/test')
+for person in os.listdir(test_dir):
+    count = 0
+    for img_dir in os.listdir(test_dir / Path(person) / Path('bmp')):
+        if count < 7 and img_dir == 'oliver.bmp':
+            new_img = Image.open(test_dir / Path(person) / Path('bmp') / Path(img_dir), 'r')
+            print(test_dir / Path(person) / Path('bmp') / Path(img_dir))
+            resized_img = new_img.resize((64, 64), Image.ANTIALIAS)
+            resized_img = np.array(resized_img)
+            test.append(resized_img)
+            test_label.append(count)
+            count += 1
 
 test = np.array(test, dtype=float)
 test_label = np.array(test_label)
@@ -77,6 +80,3 @@ test_label = utils.to_categorical(test_label, num_classes)
 
 score = model.evaluate(test, test_label, verbose=1)
 print('\n', 'Test accuracy:', score[1])
-
-# Save weights
-model.save_weights("/facesdb/model/first_run.json")
