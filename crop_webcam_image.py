@@ -6,19 +6,19 @@ import matplotlib.pyplot as plt
 
 # load open cv's cascade, open the image,change it to grayscale, and crop the image out
 face_cascade = cv.CascadeClassifier('haarcascade_frontalface_default.xml')
-image = cv.imread('test.jpeg')
-test_image_gray = cv.cvtColor(image, cv.COLOR_BGR2GREY)
-plt.imshow(test_image_gray, cmap='gray')
+image = cv.imread('s005-03_img.bmp')
+gray_img = cv.cvtColor(image, cv.IMREAD_GRAYSCALE)
 
-def convertToRGB(image) 
-   return cv.cvtColor(image, cv.COLOR_BGR2RGB)
+faces = face_cascade.detectMultiScale(gray_img, 1.1, 4)
 
-faces = face_cascade.detectMultiScale(gray, 1.1, 4)
 # Draw rectangle around the faces
 for (x, y, w, h) in faces:
-    cv2.rectangle(img, (x, y), (x+w, y+h), (255, 0, 0), 2)
-# Display the output
-cv2.imshow('img', img)
-cv2.waitKey()
+    cv.rectangle(image, (x, y), (x+w, y+h), (255, 0, 0), 2)
 
-# ultimately, crop the image out right here
+cropped_img = gray_img[y:y+h, x:x+w]
+plt.imshow(cropped_img)
+cv.waitKey(0)
+
+plt.savefig('./cropped_results/out.png', dpi=100)
+plt.show()
+plt.draw()
