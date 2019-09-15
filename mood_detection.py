@@ -1,29 +1,24 @@
 import os
-<<<<<<< HEAD
-from tensorflow import keras
-from tensorflow.python.keras.preprocessing.image import ImageDataGenerator, load_img, img_to_array
-=======
 from tensorflow.python.keras.preprocessing.image import ImageDataGenerator, load_img, img_to_array
 import tensorflow as tf
->>>>>>> a60f22e1f7cce667fec8a12baf4fb4a8348963fa
 from tensorflow.python.keras import layers
 from skimage.color import rgb2lab
 import numpy as np
 from PIL import Image
 
-model_directory = "/posture/model/first_run.h5"
+# model_directory = "/facesdb/model/first_run.json"
 
 # loading images
 train = []
 label = []
 test_directory = '/facesdb/test'
 train_directory = "/facesdb/training"
-for people in os.listdir(test_directory):
-    for file in os.listdir(os.path.join(test_directory, people)):
+for people in os.listdir(train_directory):
+    for file in os.listdir(train_directory + '/' + people)
         count = 0
-        for img in os.listdir(os.path.join(test_directory, people, file)):
-            if count < 7:
-                new_img = Image.open(test_directory + '/' + file, 'r')
+        for img in os.listdir(train_directory + '/' + people + '/' + file):
+            if count < 7
+                new_img = Image.open(train_directory + '/' + file, 'r')
                 resized_img = new_img.resize((64, 64), Image.ANTIALIAS)
                 train.append(resized_img)
                 label.append(count)
@@ -31,7 +26,6 @@ for people in os.listdir(test_directory):
 
 train = np.array(train, dtype=float)
 train = 1.0/255*train
-np.random.shuffle(train)
 
 # the ML model
 model = tf.keras.Sequential()
@@ -48,6 +42,30 @@ model.add(layers.Dense(500, activation='relu'))
 model.add(layers.Dropout(0.2))
 model.add(layers.Dense(62, activation='softmax'))
 model.summary()
-model.compile(optimizer='rmsprop', loss='mse')
 
-model.load_weights("/mirflickr/model/dog.h5")
+# model.load_weights("/facesdb/model/first_run.json")
+
+model.compile(loss='categorical_crossentropy', optimizer='rmsprop', metrics=['accuracy'])
+model.fit(train, label, batch_size=25, epochs=200, verbose=1)
+
+test = []
+test_label = []
+for people in os.listdir(test_directory):
+    for file in os.listdir(test_directory + '/' + people):
+        count = 0
+        for img in os.listdir(test_directory + '/' + people + '/' + file):
+            if count < 7:
+                new_img = Image.open(test_directory + '/' + file, 'r')
+                resized_img = new_img.resize((64, 64), Image.ANTIALIAS)
+                test.append(resized_img)
+                test_label.append(count)
+                count += 1
+
+test = np.array(test, dtype=float)
+test = 1.0/255*test
+
+score = model.evaluate(test, test_label, verbose=1)
+print('\n', 'Test accuracy:', score[1])
+
+# Save weights
+model.save_weights("/facesdb/model/first_run.json")
