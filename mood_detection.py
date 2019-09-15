@@ -1,4 +1,5 @@
 import os
+from pathlib import Path
 from tensorflow.python.keras.preprocessing.image import ImageDataGenerator, load_img, img_to_array
 import tensorflow as tf
 from tensorflow.python.keras import layers
@@ -11,18 +12,17 @@ from PIL import Image
 # loading images
 train = []
 label = []
-test_directory = '/facesdb/test'
-train_directory = "/facesdb/training"
-for people in os.listdir(train_directory):
-    for file in os.listdir(train_directory + '/' + people)
-        count = 0
-        for img in os.listdir(train_directory + '/' + people + '/' + file):
-            if count < 7
-                new_img = Image.open(train_directory + '/' + file, 'r')
-                resized_img = new_img.resize((64, 64), Image.ANTIALIAS)
-                train.append(resized_img)
-                label.append(count)
-                count += 1
+test_dir = Path('facesdb/test')
+train_dir = Path('facesdb/training')
+for person in os.listdir(train_dir):
+    count = 0
+    for img_dir in os.listdir(train_dir / Path(person) / Path('bmp')):
+        if count < 7:
+            new_img = Image.open(train_dir / Path(person) / Path('bmp') / Path(img_dir), 'r')
+            resized_img = new_img.resize((64, 64), Image.ANTIALIAS)
+            train.append(resized_img)
+            label.append(count)
+            count += 1
 
 train = np.array(train, dtype=float)
 train = 1.0/255*train
