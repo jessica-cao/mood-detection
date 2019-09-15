@@ -47,7 +47,7 @@ model.add(layers.Dropout(0.2))
 model.add(layers.Flatten())
 model.add(layers.Dense(500, activation='relu'))
 model.add(layers.Dropout(0.2))
-model.add(layers.Dense(62, activation='softmax'))
+model.add(layers.Dense(7, activation='softmax'))
 model.summary()
 
 # model.load_weights("/facesdb/model/first_run.json")
