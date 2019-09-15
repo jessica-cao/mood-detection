@@ -1,6 +1,11 @@
 import os
+<<<<<<< HEAD
 from tensorflow import keras
 from tensorflow.python.keras.preprocessing.image import ImageDataGenerator, load_img, img_to_array
+=======
+from tensorflow.python.keras.preprocessing.image import ImageDataGenerator, load_img, img_to_array
+import tensorflow as tf
+>>>>>>> a60f22e1f7cce667fec8a12baf4fb4a8348963fa
 from tensorflow.python.keras import layers
 from skimage.color import rgb2lab
 import numpy as np
