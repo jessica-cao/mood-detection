@@ -1,0 +1,36 @@
+diff --git a/mood_detection.py b/mood_detection.py
+index a4c0b0c..e85204e 100644
+--- a/mood_detection.py
++++ b/mood_detection.py
+@@ -19,17 +19,21 @@ for person in os.listdir(train_dir):
+     for img_dir in os.listdir(train_dir / Path(person) / Path('bmp')):
+         if count < 7:
+             new_img = Image.open(train_dir / Path(person) / Path('bmp') / Path(img_dir), 'r')
++            print(train_dir / Path(person) / Path('bmp') / Path(img_dir))
+             resized_img = new_img.resize((64, 64), Image.ANTIALIAS)
++            resized_img = np.array(resized_img)
+             train.append(resized_img)
+             label.append(count)
+             count += 1
+ 
+-train = np.array(train, dtype=float)
++train = np.array(train)
++print(train)
++label = np.array(label)
+ train = 1.0/255*train
+ 
+ # the ML model
+ model = tf.keras.Sequential()
+-model.add(layers.InputLayer(input_shape=(28, 28, 3)))
++model.add(layers.InputLayer(input_shape=(64, 64, 3)))
+ model.add(layers.Conv2D(16, (2, 2), padding='same', activation='relu'))
+ model.add(layers.MaxPooling2D(pool_size=(2, 2)))
+ model.add(layers.Conv2D(32, (2, 2),  padding='same', activation='relu'))
+@@ -62,6 +66,7 @@ for people in os.listdir(test_directory):
+                 count += 1
+ 
+ test = np.array(test, dtype=float)
++test_label = np.array(test_label)
+ test = 1.0/255*test
+ 
+ score = model.evaluate(test, test_label, verbose=1)
